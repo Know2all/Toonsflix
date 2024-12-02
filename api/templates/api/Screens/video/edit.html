@@ -1,0 +1,77 @@
+{% extends 'api/Inc/base.html' %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <ul class="breadcrumb nav">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" hx-boost="true" >Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'video-view' %}" hx-boost="true" >Videos</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'video-edit' %}?id={{video.id}}" hx-boost="true">Edit</a></li>
+            </ul>
+            <div class="card">
+                <div class="card-body">
+                    <form class="row col-sm-12 col-lg-12 needs-validation" novalidate hx-validate="true" hx-post="video-edit?id={{video.id}}" hx-swap="none" hx-on="htmx:afterRequest:makeToast(event);"  >
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{video.id}}">
+                        <div class="col-sm-12 col-lg-6 col-md-6">
+                            <div class="col-sm-12 mb-12">
+                                <label class="form-label">Cartoon</label>
+                                <select name="cartoon" class="form-select">
+                                    {% for c in cartoons %}
+                                    <option value="{{c}}" {% if c == video.cartoon %} selected {% endif %} >{{c}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-12 mb-2">
+                                <label class="form-label">Title</label>
+                                <input type="text" value="{{video.title}}" name="title" placeholder="Enter Title." class="form-control" required >
+                            </div>
+                            <div class="col-sm-12 mb-2">
+                                <label class="form-label">Thumbnail Url</label>
+                                <input type="url" value="{{video.thumbnail}}" name="image" placeholder="Enter Thumbnail url." class="form-control" required >
+                            </div>
+    
+                        </div>
+                        <div class="col-sm-12 col-lg-6 col-md-6">
+                            <div class="col-sm-12 mb-2">
+                                <label class="form-label">Video Url</label>
+                                <input type="url" value="{{video.videoUrl}}" name="video" placeholder="Enter Video url." class="form-control" required >
+                            </div>
+                            <div class="col-sm-12 mb-2">
+                                <label class="form-label">Status</label>
+                                <select name="status" class="form-select">
+                                    <option value="show" {% if video.status %} selected {% endif %} >Show</option>
+                                    <option value="hide" {% if not video.status %} selected {% endif %} >Hide</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 mb-2">
+                                <label class="form-label">Tags</label>
+                                <div class="mb-2">
+                                    <select class="select2 form-control select2-multiple" multiple="true" name="tags">
+                                        {% for tag in tags %}
+                                            {% if tag in video.tags.all %}
+                                                <option value="{{tag.id}}" selected >#{{tag}}</option>
+                                            {% else %}
+                                                <option value="{{tag.id}}">#{{tag}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-sm" type="submit">
+                                <i class="fa fa-save"></i>
+                                <span class="mx-1">Submit</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- container-fluid -->
+    </div>
+</div>
+{% endblock content %}

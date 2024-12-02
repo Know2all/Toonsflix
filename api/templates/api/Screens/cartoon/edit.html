@@ -1,0 +1,56 @@
+{% extends 'api/Inc/base.html' %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <ul class="breadcrumb nav">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" hx-boost="true" >Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cartoon-view' %}" hx-boost="true" >Series</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cartoon-edit' %}?id={{cartoon.id}}" hx-boost="true">Edit</a></li>
+            </ul>
+            <div class="card">
+                <div class="card-body">
+                    <form class="row col-sm-12 col-lg-6 needs-validation" hx-post="cartoon-edit" hx-validate="true" hx-swap="none" hx-on="htmx:afterRequest:makeToast(event);" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{cartoon.id}}" required>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Choose Category</label>
+                            <select name="category" class="form-select">
+                                {% for c in categorys %}
+                                <option value="{{c.id}}"  {% if c.id == cartoon.category.id %} selected {% endif %} >{{c.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Title</label>
+                            <input type="text" value="Avathar Season 1" name="title" placeholder="Enter Title." class="form-control" required >
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Image</label>
+                            <input type="url" value="https://youtube.com" name="image" placeholder="Enter url." class="form-control" required >
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="show">Show</option>
+                                <option value="hide">Hide</option>
+                            </select>
+                        </div>
+                        
+                        
+                        <div>
+                            <button class="btn btn-success btn-sm" type="submit">
+                                <i class="fa fa-save"></i>
+                                <span class="mx-1">Submit</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- container-fluid -->
+    </div>
+</div>
+{% endblock content %}

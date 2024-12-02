@@ -1,0 +1,94 @@
+{% extends 'api/Inc/base.html' %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <ul class="breadcrumb nav">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" hx-boost="true" >Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'category-view' %}" hx-boost="true" >Category</a></li>
+            </ul>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-2">
+                            <a href="{% url 'category-add' %}" hx-boost="true" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus"></i>
+                                <span class="mx-1">Add</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                            </form>
+                            <thead>
+                                <th>Sno</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- container-fluid -->
+    </div>
+</div>
+
+
+<div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img src="" id="thumbnail" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", $("input[name=csrfmiddlewaretoken]").val());
+            }
+        });
+
+        $('#datatable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "category-view",
+                "type": "POST",
+                "error":function(xhr,status,err){
+                    console.log(err);
+                },
+            },
+            "columns":[
+                {"data":"sno"},
+                {"data":"title"},
+                {"data":"thumbnail"},
+                {"data":"action"},
+            ],
+            "pageLength":10,
+            "lengthMenu": [10,50, 100],
+        });
+    });
+</script>
+
+
+{% endblock content %}

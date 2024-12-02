@@ -1,0 +1,113 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="Themesbrand" name="author" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+        <!-- Bootstrap Css -->
+        <link href="{% static 'assets/css/bootstrap.min.css' %}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <!-- Icons Css -->
+        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+
+        <link href="{% static 'assets/libs/alertify.js/css/alertify.css' %}" rel="stylesheet" type="text/css">
+
+        <link href="{% static 'assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css' %}" rel="stylesheet"  type="text/css" />
+    
+
+        <!-- App Css-->
+        <link href="{% static 'assets/css/app.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
+
+        <link href="{% static 'assets/libs/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css" />
+
+        <script src="{% static 'assets/libs/jquery/jquery.min.js' %}"></script>
+
+        <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+        
+        <style>
+            .toUpper{
+               text-transform: uppercase; 
+            }
+        </style>
+
+    </head>
+    <body data-sidebar="dark" data-keep-enlarged="true" class="vertical-collpsed">
+        <!-- Loader -->
+        
+        {% if not request.META.HTTP_HX_REQUEST %}
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner"></div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="layout-wrapper">
+            {% include 'api/Components/header.html' %}
+            {% include 'api/Components/left-sidebar.html' %}
+            {% block content %}
+            {% endblock content %}            
+        </div>
+        {% include 'api/Components/right-sidebar.html' %}
+        <!-- JAVASCRIPT -->
+        <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'assets/libs/metismenu/metisMenu.min.js' %}"></script>
+        <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+        <script src="{% static 'assets/libs/node-waves/waves.min.js '%}"></script>
+        <script src="{% static 'assets/js/pages/dashboard.init.js' %}"></script>
+        <script src="{% static 'assets/js/pages/form-validation.init.js' %}"></script>
+        <script src="{% static 'assets/js/app.js' %}"></script>
+        <script src="{% static 'assets/js/custom.js' %}"></script>
+        <script src="{% static 'assets/libs/select2/js/select2.min.js' %}"></script>
+        
+        <script src="{% static 'assets/libs/alertify.js/js/alertify.js' %}"></script>
+
+        <script src="{% static 'assets/js/pages/alertify-init.js' %}"></script>
+        <script>
+            
+            function makeToast(event){
+                const status = event.detail.xhr.status;
+                const message = event.detail.xhr.responseText;
+                if(status == 200){
+                    alertify.success(message);
+                }else{
+                    alertify.error(message);
+                }
+            }
+
+            $(document).on('submit','.delete',function(e){
+                e.preventDefault();
+
+                var id = $(this).data("id");
+                var action = $(this).data("action");
+                
+                $.ajax({
+                    url:action,
+                    method:"POST",
+                    data:{"id":id},
+                    success:function(response){
+                        alertify.success(response);
+                    },
+                    error:function(xhr,status,err){
+                        console.error(err);
+                    }
+                });
+            
+            });
+
+            $(document).on("click",".preview",function(e){
+                var image = $(this).data('img');
+                $('#thumbnail').attr('src',image);
+            });
+        </script>
+
+        <!-- Required datatable js -->
+        <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    </body>
+    </html>

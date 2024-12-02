@@ -1,0 +1,47 @@
+    <!-- Right Sidebar -->
+    <div class="right-bar">
+        <div data-simplebar class="h-100">
+            <div class="rightbar-title px-3 py-4">
+                <a href="javascript:void(0);" class="right-bar-toggle float-end">
+                    <i class="mdi mdi-close noti-icon"></i>
+                </a>
+                <h5 class="m-0">Settings</h5>
+            </div>
+
+            <!-- Settings -->
+            <hr class="mt-0" />
+            <h6 class="text-center mb-0">Choose Date</h6>
+            <div class="p-4">
+                <input type="date" name="mydate" id="mydate" class="form-control"/>
+                <div class="mt-2 text-center">
+                    <button type="button" id="setdatebtn" class="btn btn-success btn-sm">Set</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- end slimscroll-menu-->
+    </div>
+    <!-- /Right-bar -->
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    <script>
+        if(localStorage.getItem("mydate") != null){
+            $('#mydate').val(localStorage.getItem("mydate"));
+        }
+        $('#setdatebtn').on('click',function(e){
+            e.preventDefault();
+            var mydate = $('#mydate').val();
+            if(mydate != ""){
+                localStorage.setItem("mydate",mydate)
+                if(localStorage.getItem("mydate") != null){
+                    if(confirm("Date Setted To "+mydate+" ?")){
+                        location.reload();
+                    }
+                }else{
+                    alert("Cannot Set Date !");
+                }
+            }
+        });
+    </script>

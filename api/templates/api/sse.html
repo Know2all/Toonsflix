@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live JSON Data Streaming with Django</title>
+</head>
+<body>
+    <h1>Live JSON Data</h1>
+    <div id="liveData"></div>
+
+    <script>
+
+        const eventSource = new EventSource('/event/chats');
+
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data); 
+            document.getElementById("liveData").innerText = `Message: ${data.message}, Timestamp: ${data.timestamp}`;
+        };
+
+        // Optional: handle errors
+        eventSource.onerror = function(event) {
+            console.error("EventSource failed:", event);
+        };
+    </script>
+</body>
+</html>

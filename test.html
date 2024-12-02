@@ -1,0 +1,134 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>ToonsFlix | Welcome</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="ToonsFlix" name="description" />
+        <meta content="Know2all" name="author" />
+        <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+        <link href="{% static 'assets/css/bootstrap.min.css' %}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+        <link href="{% static 'assets/libs/alertify.js/css/alertify.css' %}" rel="stylesheet" type="text/css">
+    </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg fixed-top  navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">ToonsFlix</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <a class="nav-link" href="{% url 'dashboard'%}">
+                    <i class="fa fa-lock"> Admin Panel</i>
+                </a>
+            </ul>
+            <form id="SearchForm" class="d-flex">
+                <input class="form-control me-2" name="query" type="search" placeholder="Search By Movie Name" aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+    </nav>
+
+    <section style="margin-top: 5rem;" id="allmovies">
+        <div class="container-fluid">
+            <div class="border border-primary border-top-0 border-end-0 border-start-0 border-bottom">
+                <h4>All Movies</h4>
+            </div>
+            <div class="row mt-2" id="movie-container"></div>
+        </div>
+    </section>
+
+    <script src="{% static 'assets/libs/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/libs/alertify.js/js/alertify.js' %}"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>  
+    <script>
+        let page = 1; 
+        let hasNextPage = true;
+        var query = "";
+        
+        function loadMoreMovies() {
+            if (!hasNextPage) return;
+        
+            $.ajax({
+                url: `{% url 'home' %}?page=${page}&query=${query}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.movies.length > 0) {
+                        data.movies.forEach(m => {
+                            const movieDiv = `<div class="col-xl-3 col-lg-4 col-md-3 col-sm-12">
+                                <div class="card">
+                                    <img src="${m.thumbnail}" class="card-img-top img-fluid" style="width: 100%; height: auto; object-fit: cover;" alt="image">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-center">${m.title}</h5>
+                                    <div class="text-center">
+                                        <a href="${m.videoUrl}" class="btn btn-primary" target="_blank">Watch or Download <i class="fa fa-download"></i> </a>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                            $('#movie-container').append(movieDiv);
+                        });
+                        hasNextPage = data.has_next; 
+                        page += 1; 
+                    }
+                },
+                error: function(error) {
+                    alert("Error loading more movies:", error);
+                    console.error('Error loading more movies :',error);
+                }
+            });
+        }
+        
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10 && hasNextPage) {
+                loadMoreMovies();
+            }
+        });
+        loadMoreMovies();
+        
+        $(document).on('submit','#SearchForm',function(e){
+            e.preventDefault();
+            query = $(this).find('input[name="query"]').val();
+            $.ajax({
+                url: `{% url 'home' %}?&query=${query}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.movies.length > 0) {
+                        $('#movie-container').empty();
+                        data.movies.forEach(m => {
+                            const movieDiv = `<div class="col-xl-3 col-lg-4 col-md-3 col-sm-12">
+                                <div class="card">
+                                    <img src="${m.thumbnail}" class="card-img-top img-fluid" style="width: 100%; height: auto; object-fit: cover;" alt="image">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-center">${m.title}</h5>
+                                    <div class="text-center">
+                                        <a href="${m.videoUrl}" class="btn btn-primary" target="_blank">Watch or Download <i class="fa fa-download"></i> </a>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                            $('#movie-container').append(movieDiv);
+                        });
+                        hasNextPage = data.has_next; 
+                        if(hasNextPage){
+                            page += 1; 
+                        }
+                    }
+                },
+                error: function(error) {
+                    alert("Error Search Query Results:", error);
+                    console.error('Error Search Query Results:',error);
+                }
+            });
+        });
+    </script>
+  </body>
+</html>

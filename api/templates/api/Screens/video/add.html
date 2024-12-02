@@ -1,0 +1,50 @@
+{% extends 'api/Inc/base.html' %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <ul class="breadcrumb nav">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" hx-boost="true" >Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'video-view' %}" hx-boost="true" >Videos</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'video-add' %}?cartoon={{cartoon}}" hx-boost="true">Add</a></li>
+            </ul>
+            <div class="card">
+                <div class="card-body">
+                    <form class="row col-sm-12 col-lg-6 needs-validation" novalidate hx-validate="true" hx-post="video-add?cartoon={{cartoon}}" hx-swap="none" hx-on="htmx:afterRequest:makeToast(event);"  >
+                        {% csrf_token %}
+                        <input type="hidden" name="cartoon" value="{{cartoon}}">
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Title</label>
+                            <input type="text" value="" name="title" placeholder="Enter Title." class="form-control" required >
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Thumbnail Url</label>
+                            <input type="url" value="" name="image" placeholder="Enter Thumbnail url." class="form-control" required >
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Video Url</label>
+                            <input type="url" value="" name="video" placeholder="Enter Video url." class="form-control" required >
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="show">Show</option>
+                                <option value="hide">Hide</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-sm" type="submit">
+                                <i class="fa fa-save"></i>
+                                <span class="mx-1">Submit</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- container-fluid -->
+    </div>
+</div>
+{% endblock content %}

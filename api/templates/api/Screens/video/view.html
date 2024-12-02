@@ -1,0 +1,99 @@
+{% extends 'api/Inc/base.html' %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <ul class="breadcrumb nav">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" hx-boost="true" >Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'video-view' %}" hx-boost="true" >Videos</a></li>
+            </ul>
+            <div class="card">
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                    </form>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <th>Sno</th>
+                                <th>Category</th>
+                                <th>Title</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                {% for item in videos %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{item.cartoon}}</td>
+                                    <td>{{item.title}}</td>
+                                    <td>{{item.thumbnail}}</td>
+                                    <td>
+                                        <a href="{% url 'video-edit' %}?id={{item.id}}" hx-boost="true" class="btn bnt-sm btn-primary"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- container-fluid -->
+    </div>
+</div>
+
+
+<div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img src="" id="thumbnail" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", $("input[name=csrfmiddlewaretoken]").val());
+            }
+        });
+
+        $('#datatable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "video-view",
+                "type": "POST",
+                "error":function(xhr,status,err){
+                    console.log(err);
+                },
+            },
+            "columns":[
+                {"data":"sno"},
+                {"data":"cartoon"},
+                {"data":"title"},
+                {"data":"thumbnail"},
+                {"data":"action"},
+            ],
+            "pageLength":10,
+            "lengthMenu": [10,50, 100],
+        });
+    });
+</script>
+
+{% endblock content %}

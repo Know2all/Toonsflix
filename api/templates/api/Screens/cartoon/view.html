@@ -1,0 +1,118 @@
+{% extends 'api/Inc/base.html' %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <ul class="breadcrumb nav">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" hx-boost="true" >Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cartoon-view' %}" hx-boost="true" >Series</a></li>
+            </ul>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-2">
+                            <a href="{% url 'cartoon-add' %}" hx-boost="true" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus"></i>
+                                <span class="mx-1">Add</span>
+                            </a>
+                        </div>
+                    </div>
+                    <form action="" method="post">
+                        {% csrf_token %}
+                    </form>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <th>Sno</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                {% for item in cartoons %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{item.title}}</td>
+                                    <td>
+                                        <a class="preview" data-img="{{item.image}}" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center" href="{{item.image}}">{{item.image}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'cartoon-edit' %}?id={{item.id}}" hx-boost="true" class="btn btn-sm btn-primary">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <form class="d-inline" hx-post="{% url 'cartoon-delete' %}"  hx-swap="none" hx-confirm="Are you sure to delete it ? You can revert it !" hx-on="htmx:afterRequest:makeToast(event);">
+                                            <input type="hidden" value="{{item.id}}" name="id" required>
+                                            {% csrf_token %}
+                                            <button  class="btn btn-danger btn-sm" type="submit">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        <a href="{% url 'video-add' %}?cartoon={{item.id}}" hx-boost="true" class="btn btn-sm btn-success">
+                                            <i class="fa fa-upload"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- container-fluid -->
+    </div>
+</div>
+
+
+<div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img src="" id="thumbnail" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", $("input[name=csrfmiddlewaretoken]").val());
+            }
+        });
+
+        $('#datatable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "cartoon-view",
+                "type": "POST",
+                "error":function(xhr,status,err){
+                    console.log(err);
+                },
+            },
+            "columns":[
+                {"data":"sno"},
+                {"data":"title"},
+                {"data":"thumbnail"},
+                {"data":"action"},
+            ],
+            "pageLength":10,
+            "lengthMenu": [10,50, 100],
+        });
+    });
+</script>
+
+{% endblock content %}

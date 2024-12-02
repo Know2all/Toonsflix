@@ -1,0 +1,43 @@
+<div class="vertical-menu">
+
+    <div data-simplebar class="h-100">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li class="menu-title">Main</li>
+
+                <li>
+                    <a href="{% url 'dashboard' %}" class="waves-effect">
+                        <i class="dripicons-device-desktop"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="dripicons-copy"></i>
+                        <span> Masters </span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{% url 'category-view' %}" hx-boost="true">Category</a></li>
+                        <li><a href="{% url 'cartoon-view' %}"  hx-boost="true">Cartoon</a></li>
+                        <li><a href="{% url 'video-view' %}" hx-boost="true">Videos</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="{% url 'logout' %}" class="waves-effect">
+                        <i class="fa fa-sign-in-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+
+                <li class="menu-title">Extras</li>
+
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>
