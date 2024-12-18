@@ -1,13 +1,20 @@
-import sqlite3
+import instaloader
 
-sqlite_conn = sqlite3.connect('db.sqlite3')
+loader = instaloader.Instaloader()
 
-# Open a file to write the SQL dump
-with open('sqlite_dump.sql', 'w') as dump_file:
-    for line in sqlite_conn.iterdump():
-        dump_file.write('%s\n' % line)
+profile = instaloader.Profile.from_username(loader.context, "r_o_l_l_n_o_004")
 
-# Close the connection
-sqlite_conn.close()
+posts_data = []
 
-print("SQLite dump file generated successfully!")
+for post in profile.get_posts():
+    posts_data.append({
+        'caption': post.caption,
+        'media_url': post.url,
+        'is_video': post.is_video,
+        'video_url': post.video_url if post.is_video else None,
+        'likes': post.likes,
+        'comments': post.comments,
+        'timestamp': post.date.strftime('%Y-%m-%d %H:%M:%S')
+    })
+
+print(posts_data)

@@ -32,5 +32,8 @@ urlpatterns = [
     path('filter_by_category',views.filter_by_category,name='filter_by_category'),
     path('filter_by_cartoon',views.filter_by_cartoon,name='filter_by_cartoon'),
 
+
+    path('get_insta_post/<str:code>',views.get_insta_post,name='get_insta_post'),
+
     path('event/chats',views.sse_view,name='chats'),
 ]

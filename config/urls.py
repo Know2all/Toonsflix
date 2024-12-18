@@ -9,6 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('api.urls')),
     path('',views.home,name='home'),
+    path('watch/<str:id>',views.watch,name="watch"),
     path('chat/home',views.chat,name='chat'),
 ]
 if settings.DEBUG:

@@ -10,7 +10,9 @@ import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import time
+import instaloader
 
+loader = instaloader.Instaloader()
 
 def chat(request):
     return render(request,template_name="api/chat.html")
@@ -56,6 +58,18 @@ def home(request):
     
 
     return render(request,template_name='api/home.html')
+
+def watch(request,id):
+    movie = Video.objects.get(pk = id)
+    if request.method == "POST":
+        id = request.POST.get('id')
+        video = Video.objects.get(pk = id)
+        return JsonResponse({'video':video.videoUrl})
+    context = {
+        'movie':movie
+    }
+    return render(request,template_name="api/watch.html",context=context)
+
 
 def authUser(request):
     if request.method == "POST":
@@ -506,3 +520,18 @@ def videoDelete(request):
     
 def dashboard(request):
     return render(request,template_name="api/Screens/home.html")
+
+def get_insta_post(request,code):
+    try:
+        post = IGCommerce.objects.get(shortcode = code)
+        response = {
+            'thumbnail':post.thumbnail,
+            'video_src':post.video,
+            'likes':post.likes,
+            'comments':post.comments,
+            'shortcode':post.shortcode,
+            'mediaid':post.media_id,
+        }
+    except Exception as e:
+        return JsonResponse({'error':str(e)},status=500)
+    return JsonResponse(response,status=200)
